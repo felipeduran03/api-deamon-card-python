@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi demonio es</title>
+</head>
+<body>
+
+
+<div id="card">
+    <h1>Mi demonio es</h1>
+    <p>Fuerza: <text id="fuerza">80%</text></p>
+    <p>Rango: Demoniaco</p>
+    <p>Nombre del demonio:</p>
+</div>
+<button onclick="window.location.href = window.location.pathname + '?t=' + Date.now()">Recargar (sin caché)</button>
+
+
+ <script>
+    async function cargar() {
+      const url = 'http://200.104.83.92:8000/api-card-demonic/demonic/card/random';
+      try {
+        const resp = await fetch(url, { method: 'GET' });
+        if (!resp.ok) throw new Error('HTTP ' + resp.status);
+        const data = await resp.json();
+        console.log(data);
+
+        
+
+        const card = document.getElementById('card');
+        card.innerHTML = `
+          <h2>${data.nombre}</h2>
+          <p>Rango: <strong>${data.rango}</strong></p>
+          <p>Fuerza: <strong>${data.fuerza}</strong></p>
+          <img src="http://200.104.83.92:8000${data.imagen}" alt="Peppadiablo" />
+
+        `; 
+    
+      } catch (err) {
+        document.getElementById('card').textContent =
+          'Error al cargar: ' + err.message;
+      }
+    }
+    cargar();
+  </script>
+</body>
+</html>
