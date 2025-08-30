@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from pydantic import BaseModel
 import random
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 
 
 class Personaje(BaseModel):
@@ -32,6 +33,21 @@ datos = [
 ]
 
 app = FastAPI()
+
+origins = [
+    "http://193.186.4.216:5500", 
+    "http://127.0.0.1:5500",    # frontend local
+    "https://midominio.com",   # dominio en producción
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 app.mount(
     "/static",
