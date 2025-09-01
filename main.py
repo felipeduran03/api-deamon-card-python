@@ -1,39 +1,14 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
-import random
+from fastapi import FastAPI, Depends, HTTPException, status
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from controllers.personaje_controller import router as personaje_router
 
-
-class Personaje(BaseModel):
-    nombre: str
-    rango: str
-    fuerza: int
-    imagen: str
-
-datos = [
-    Personaje(
-        nombre="Demonikachu",
-        rango="Demoniaco",
-        fuerza=80,
-        imagen="/static/Demonikachu.png"
-    ),
-    Personaje(
-        nombre="Peppadiablo",
-        rango="Demonio",
-        fuerza=50,
-        imagen="/static/Demonikitty.png"
-    ),
-    Personaje(
-        nombre="Demonikitty",
-        rango="Demonito",
-        fuerza=120,
-        imagen="/static/Peppadiablo.png"
-    )
-]
+from fastapi.security import HTTPBasic, HTTPBasicCredentials
+import secrets
 
 app = FastAPI()
 
+# 👇 Aquí está lo de CORS
 origins = [
     "http://193.186.4.216:5500", 
     "http://127.0.0.1:5500",    # frontend local
@@ -48,17 +23,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
+# 👇 Servir imágenes estáticas
 app.mount(
     "/static",
     StaticFiles(directory=r"C:\Users\luisf\OneDrive\Desktop\API 2\img"),
     name="static"
 )
 
+# ------------------------------
+# 🔐 Seguridad con Basic Auth
+# ------------------------------
+security = HTTPBasic()
 
-@app.get("/api-card-demonic/demonic/card/random", response_model=Personaje)
-def read_root():
-    rango = len(datos)
-    numero = random.randint(0, (rango-1))
-    return datos[numero]
+def auth(credentials: HTTPBasicCredentials = Depends(security)):
+    correct_username = secrets.compare_digest(credentials.username, "diablo")   # usuario válido
+    correct_password = secrets.compare_digest(credentials.password, "123")    # contraseña válida
+    if not (correct_username and correct_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Credenciales inválidas",
+            headers={"WWW-Authenticate": "Basic"},
+        )
+    return credentials.username
 
+
+# 👇 Registrar las rutas con seguridad
+app.include_router(
+    personaje_router,
+    dependencies=[Depends(auth)]  # ✅ todas las rutas del router requieren Basic Auth
+)
