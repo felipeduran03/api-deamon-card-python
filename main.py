@@ -1,10 +1,7 @@
-from fastapi import FastAPI, Depends, HTTPException, status
+from fastapi import FastAPI, Depends, HTTPException, status, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from controllers.personaje_controller import router as personaje_router
-
-from fastapi.security import HTTPBasic, HTTPBasicCredentials
-import secrets
 
 app = FastAPI()
 
@@ -30,25 +27,25 @@ app.mount(
     name="static"
 )
 
-# ------------------------------
-# 🔐 Seguridad con Basic Auth
-# ------------------------------
-security = HTTPBasic()
 
-def auth(credentials: HTTPBasicCredentials = Depends(security)):
-    correct_username = secrets.compare_digest(credentials.username, "diablo")   # usuario válido
-    correct_password = secrets.compare_digest(credentials.password, "123")    # contraseña válida
-    if not (correct_username and correct_password):
+# ------------------------------
+# 🔐 Seguridad con API Key
+# ------------------------------
+API_KEY = "1234"   # 👉 cámbiala por algo más seguro
+API_KEY_NAME = "X-API-KEY"
+
+async def api_key_auth(request: Request):
+    api_key = request.headers.get(API_KEY_NAME)
+    if api_key != API_KEY:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Credenciales inválidas",
-            headers={"WWW-Authenticate": "Basic"},
+            detail="API Key inválida o ausente",
+            headers={"WWW-Authenticate": "API key"},
         )
-    return credentials.username
-
+    return True
 
 # 👇 Registrar las rutas con seguridad
 app.include_router(
     personaje_router,
-    dependencies=[Depends(auth)]  # ✅ todas las rutas del router requieren Basic Auth
+    dependencies=[Depends(api_key_auth)]  # ✅ todas las rutas del router requieren X-API-Key
 )
