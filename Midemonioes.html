@@ -1,14 +1,19 @@
+<!-- =========================================
+     HTML — Inicio del marcado del documento
+     ========================================= -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Mi demonio es</title>
-
   <!-- Tipos góticos y display -->
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=UnifrakturMaguntia&display=swap" rel="stylesheet">
 
+  <!-- =========================================
+       CSS — Inicio de estilos del documento
+       ========================================= -->
   <style>
     :root{
       --bg1:#0b0002;
@@ -31,8 +36,6 @@
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Cantarell, "Helvetica Neue", Arial, sans-serif;
       overflow-x:hidden;
     }
-
-    /* Ascuas flotantes */
     .embers{
       position:fixed; inset:0; pointer-events:none; z-index:0;
       background:
@@ -47,7 +50,6 @@
       50%{ transform: translateY(-12px) }
       100%{ transform: translateY(0) }
     }
-
     .wrap{
       position:relative;
       min-height:100%;
@@ -56,7 +58,6 @@
       padding:48px 16px 96px;
       z-index:1;
     }
-
     .title{
       text-align:center;
       margin:0 0 24px;
@@ -71,8 +72,6 @@
         0 0 42px rgba(255,0,0,.35);
       position: relative;
     }
-
-    /* Efecto “sangre” simple con text-shadow vertical (inspirado en técnicas de blood text) */
     .title.bloody{
       text-shadow:
         0 1px 0 #300000,
@@ -84,7 +83,6 @@
         0 14px 12px rgba(255, 0, 0, .15),
         0 22px 18px rgba(255, 0, 0, .08);
     }
-
     .card{
       width:min(880px, 92vw);
       background: rgba(20, 0, 0, .35);
@@ -96,17 +94,12 @@
       backdrop-filter: blur(8px) saturate(110%);
       -webkit-backdrop-filter: blur(8px) saturate(110%);
       display:grid;
-      grid-template-columns: 1.1fr 1fr;
+      grid-template-columns: 1fr;
       gap: 20px;
       padding: clamp(16px, 2.8vw, 28px);
       align-items:center;
       position:relative;
     }
-
-    @media (max-width: 840px){
-      .card{ grid-template-columns: 1fr }
-    }
-
     .card::before{
       content:"";
       position:absolute; inset:-1px;
@@ -115,11 +108,10 @@
       pointer-events:none;
       opacity:.35;
     }
-
     .info{
       padding: 12px;
+      text-align:center;
     }
-
     .info h2{
       margin: 0 0 10px;
       font-family: "Cinzel", serif;
@@ -128,46 +120,20 @@
       color:#ffd1d1;
       letter-spacing:.5px;
     }
-
     .meta{
       display:grid;
       gap:10px;
       margin: 10px 0 0;
       font-size: clamp(14px, 2.4vw, 18px);
       color: var(--muted);
+      justify-items:center;
     }
     .meta strong{
       color: #ffb3b3;
       text-shadow: 0 0 6px rgba(255,0,0,.45);
     }
-
-    .art{
-      position:relative;
-      border-radius: 14px;
-      overflow:hidden;
-      border:1px solid rgba(255, 0, 0, .25);
-      background: rgba(0,0,0,.25);
-      box-shadow: inset 0 0 18px rgba(255,0,0,.08);
-    }
-    .art img{
-      width:100%;
-      height:auto;
-      display:block;
-      object-fit: cover;
-      aspect-ratio: 4 / 3;
-      filter: saturate(110%) contrast(105%);
-    }
-    .art::after{
-      /* viñeta rojiza */
-      content:"";
-      position:absolute; inset:0;
-      background:
-        radial-gradient(80% 80% at 50% 10%, transparent 0 55%, rgba(255,0,0,.08) 70%, rgba(0,0,0,.35) 100%);
-      pointer-events:none;
-    }
-
     .actions{
-      display:flex; gap:14px; flex-wrap:wrap; margin-top: 14px;
+      display:flex; gap:14px; flex-wrap:wrap; margin-top: 14px; justify-content:center;
     }
     .btn{
       appearance:none; border:none; cursor:pointer;
@@ -197,22 +163,78 @@
       color:#ffbdbd;
     }
     .footer{
-      margin-top: 18px;
+      margin-top: 6px;
       font-size: 12px;
       color: #8b5a5a;
       text-align:center;
     }
-    .divider{
-      height:1px;
-      background: linear-gradient(90deg, transparent, rgba(255,0,0,.35), transparent);
-      margin: 10px 0;
-      border:0;
+
+    /* Panel VS con Grid: 1fr auto 1fr para (imagen – VS – imagen) */
+    .versus{
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: clamp(10px, 3vw, 22px);
+    }
+    .vs{
+      font-family: "Cinzel", serif;
+      font-weight: 700;
+      letter-spacing: 1px;
+      font-size: clamp(20px, 6vw, 42px);
+      color: #ffd1d1;
+      text-shadow:
+        0 0 2px #fff,
+        0 0 6px rgba(255,255,255,.3),
+        0 0 18px rgba(255,0,0,.65),
+        0 0 42px rgba(255,0,0,.35);
+      padding: 6px 10px;
+      border-radius: 12px;
+      background: linear-gradient(180deg, rgba(20,0,0,.35), rgba(40,0,0,.35));
+      border: 1px solid rgba(255,0,0,.35);
+      box-shadow: inset 0 0 12px rgba(255,0,0,.2);
+    }
+
+    /* AUMENTO DE ALTURA: más altos hacia arriba sin distorsionar */
+    .art{
+      position:relative;
+      border-radius: 14px;
+      overflow:hidden;
+      border:1px solid rgba(255, 0, 0, .25);
+      background: rgba(0,0,0,.25);
+      box-shadow: inset 0 0 18px rgba(255,0,0,.08);
+      min-height: clamp(220px, 36vw, 420px); /* altura mínima mayor y fluida */
+    }
+    .art img{
+      width:100%;
+      height:100%;                /* el img rellena toda la altura del marco */
+      object-fit: cover;          /* recorta manteniendo proporción */
+      object-position: center;    /* centra el recorte */
+      aspect-ratio: 3 / 4;        /* más vertical que 4/3 para “subir” altura */
+      display:block;
+      filter: saturate(110%) contrast(105%);
+    }
+    .art::after{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(80% 80% at 50% 10%, transparent 0 55%, rgba(255,0,0,.08) 70%, rgba(0,0,0,.35) 100%);
+      pointer-events:none;
+    }
+
+    @media (max-width: 640px){
+      .versus{
+        grid-template-columns: 1fr;
+      }
+      .vs{ justify-self: center; order: 2; }
+      .art.left{ order: 1; }
+      .art.right{ order: 3; }
+      .art{ min-height: clamp(220px, 56vw, 520px); } /* más alto en móviles */
     }
   </style>
 </head>
 <body>
   <div class="embers"></div>
-
   <main class="wrap">
     <h1 class="title bloody">Mi demonio es</h1>
 
@@ -230,45 +252,57 @@
         <p class="footer">Forjado en sombras y fuego.</p>
       </div>
 
-      <figure class="art">
-        <img id="imagen" src="http://200.104.83.92:8000/static/Peppadiablo.png" alt="Ilustración demoniaca">
-      </figure>
+      <!-- Panel de enfrentamiento -->
+      <div class="versus">
+        <figure class="art left">
+          <img id="imagen1" src="http://200.104.83.92:8000/static/Peppadiablo.png" alt="Ilustración demoniaca A">
+        </figure>
+
+        <span class="vs" aria-hidden="true">VS</span>
+
+        <figure class="art right">
+          <img id="imagen2" src="http://200.104.83.92:8000/static/Peppadiablo.png" alt="Ilustración demoniaca B">
+        </figure>
+      </div>
     </section>
   </main>
 
+  <!-- =========================================
+       JavaScript — Inicio de la lógica de la app
+       ========================================= -->
   <script>
-    async function cargar() {
+    async function fetchCarta() {
       const url = 'http://200.104.83.92:8000/api-card-demonic/demonic/card/random';
+      const resp = await fetch(url, {
+        method: 'GET',
+        headers: { 'X-API-KEY': 1234 }
+      });
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      return resp.json();
+    }
+
+    function normalizaImagen(path){
+      if (!path) return 'http://200.104.83.92:8000/static/Peppadiablo.png';
+      return path.startsWith('http') ? path : ('http://200.104.83.92:8000' + path);
+    }
+
+    async function cargar() {
       try {
-        const resp = await fetch(url, { method: 'GET' });
-        if (!resp.ok) throw new Error('HTTP ' + resp.status);
-        const data = await resp.json();
-
-        document.getElementById('nombre').textContent = data.nombre ?? '¿Sin nombre?';
-        document.getElementById('rango').textContent  = data.rango ?? '—';
-        document.getElementById('fuerza').textContent = data.fuerza ?? '—';
-
-        // Si el backend retorna una ruta relativa en data.imagen, anteponer host
-        const imgUrl = data.imagen?.startsWith('http')
-          ? data.imagen
-          : ('http://200.104.83.92:8000' + (data.imagen ?? '/static/Peppadiablo.png'));
-        document.getElementById('imagen').src = imgUrl;
-
+        const [a, b] = await Promise.all([fetchCarta(), fetchCarta()]);
+        document.getElementById('nombre').textContent = `${a.nombre ?? '¿Sin nombre?'} vs ${b.nombre ?? '¿Sin nombre?'}`;
+        document.getElementById('rango').textContent  = `${a.rango ?? '—'} vs ${b.rango ?? '—'}`;
+        document.getElementById('fuerza').textContent = `${a.fuerza ?? '—'} vs ${b.fuerza ?? '—'}`;
+        document.getElementById('imagen1').src = normalizaImagen(a.imagen);
+        document.getElementById('imagen2').src = normalizaImagen(b.imagen);
       } catch (err) {
-        const nombre = document.getElementById('nombre');
-        nombre.textContent = 'Error de invocación: ' + err.message;
+        document.getElementById('nombre').textContent = 'Error de invocación: ' + err.message;
       }
     }
 
-    // Botón para pedir otra carta sin recargar toda la página
     document.getElementById('btn-recargar').addEventListener('click', cargar);
-
-    // Botón para recargar completamente (evitando caché)
     document.getElementById('btn-refrescar').addEventListener('click', () => {
       window.location.href = window.location.pathname + '?t=' + Date.now();
     });
-
-    // Primera carga
     cargar();
   </script>
 </body>
