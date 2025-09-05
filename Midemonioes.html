@@ -255,13 +255,13 @@
       <!-- Panel de enfrentamiento -->
       <div class="versus">
         <figure class="art left">
-          <img id="imagen1" src="http://200.104.83.92:8000/static/Peppadiablo.png" alt="Ilustración demoniaca A">
+          <img id="imagen1" src="http://127.0.0.1:8000/static/Peppadiablo.png" alt="Ilustración demoniaca A">
         </figure>
 
         <span class="vs" aria-hidden="true">VS</span>
 
         <figure class="art right">
-          <img id="imagen2" src="http://200.104.83.92:8000/static/Peppadiablo.png" alt="Ilustración demoniaca B">
+          <img id="imagen2" src="http://127.0.0.1:8000/static/Peppadiablo.png" alt="Ilustración demoniaca B">
         </figure>
       </div>
     </section>
@@ -271,39 +271,45 @@
        JavaScript — Inicio de la lógica de la app
        ========================================= -->
   <script>
-    async function fetchCarta() {
-      const url = 'http://200.104.83.92:8000/api-card-demonic/demonic/card/random';
-      const resp = await fetch(url, {
-        method: 'GET',
-        headers: { 'X-API-KEY': 1234 }
-      });
-      if (!resp.ok) throw new Error('HTTP ' + resp.status);
-      return resp.json();
-    }
+async function fetchCarta() {
+  const url = 'http://127.0.0.1:8000/api-card-demonic/demonic/card/random';
+  const resp = await fetch(url, {
+    method: 'GET',
+    headers: { 'X-API-KEY': 1234 } // o quita este header si no estás usando API-key
+  });
+  if (!resp.ok) throw new Error('HTTP ' + resp.status);
+  return resp.json(); // ahora devuelve un array con 2 cartas
+}
 
-    function normalizaImagen(path){
-      if (!path) return 'http://200.104.83.92:8000/static/Peppadiablo.png';
-      return path.startsWith('http') ? path : ('http://200.104.83.92:8000' + path);
-    }
+function normalizaImagen(path){
+  if (!path) return 'http://127.0.0.1:8000/static/Peppadiablo.png';
+  return path.startsWith('http') ? path : ('http://127.0.0.1:8000' + path);
+}
 
-    async function cargar() {
-      try {
-        const [a, b] = await Promise.all([fetchCarta(), fetchCarta()]);
-        document.getElementById('nombre').textContent = `${a.nombre ?? '¿Sin nombre?'} vs ${b.nombre ?? '¿Sin nombre?'}`;
-        document.getElementById('rango').textContent  = `${a.rango ?? '—'} vs ${b.rango ?? '—'}`;
-        document.getElementById('fuerza').textContent = `${a.fuerza ?? '—'} vs ${b.fuerza ?? '—'}`;
-        document.getElementById('imagen1').src = normalizaImagen(a.imagen);
-        document.getElementById('imagen2').src = normalizaImagen(b.imagen);
-      } catch (err) {
-        document.getElementById('nombre').textContent = 'Error de invocación: ' + err.message;
-      }
-    }
+async function cargar() {
+  try {
+    const cartas = await fetchCarta(); // solo una llamada
+    const [a, b] = cartas;             // desestructuramos las 2 cartas
 
-    document.getElementById('btn-recargar').addEventListener('click', cargar);
-    document.getElementById('btn-refrescar').addEventListener('click', () => {
-      window.location.href = window.location.pathname + '?t=' + Date.now();
-    });
-    cargar();
-  </script>
+    document.getElementById('nombre').textContent = `${a.nombre ?? '¿Sin nombre?'} vs ${b.nombre ?? '¿Sin nombre?'}`;
+    document.getElementById('rango').textContent  = `${a.rango ?? '—'} vs ${b.rango ?? '—'}`;
+    document.getElementById('fuerza').textContent = `${a.fuerza ?? '—'} vs ${b.fuerza ?? '—'}`;
+    document.getElementById('imagen1').src = normalizaImagen(a.imagen);
+    document.getElementById('imagen2').src = normalizaImagen(b.imagen);
+
+  } catch (err) {
+    document.getElementById('nombre').textContent = 'Error de invocación: ' + err.message;
+  }
+}
+
+document.getElementById('btn-recargar').addEventListener('click', cargar);
+document.getElementById('btn-refrescar').addEventListener('click', () => {
+  window.location.href = window.location.pathname + '?t=' + Date.now();
+});
+
+// cargar al iniciar
+cargar();
+</script>
+
 </body>
 </html>
